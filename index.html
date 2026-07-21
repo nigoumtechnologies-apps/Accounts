@@ -15,126 +15,137 @@
     --gold:#B8901F; --charcoal:#2A2A28; --muted:#767468;
   }
   *{box-sizing:border-box;}
-  body{margin:0;background:#DCD6C4;font-family:'Inter',sans-serif;color:var(--charcoal);
-    display:flex;justify-content:center;padding:24px 12px;}
-  .app{width:420px;background:var(--paper);border-radius:16px;overflow:hidden;
-    box-shadow:0 20px 50px rgba(0,0,0,0.25);min-height:640px;display:flex;flex-direction:column;}
+  html, body{height:100%;margin:0;}
+  body{background:#DCD6C4;font-family:'Inter',sans-serif;color:var(--charcoal);
+    display:flex;justify-content:center;align-items:center;padding:12px;overflow:hidden;}
+  .app{width:420px;height:100%;max-height:660px;background:var(--paper);border-radius:16px;overflow:hidden;
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);display:flex;flex-direction:column;}
 
   /* ---- Login ---- */
-  #login-screen{padding:60px 30px;text-align:center;}
-  #login-screen .brand{font-family:'Zilla Slab',serif;font-weight:700;font-size:30px;color:var(--ink);margin-bottom:6px;}
+  #login-screen{padding:50px 30px;text-align:center;}
+  #login-screen .brand{font-family:'Zilla Slab',serif;font-weight:700;font-size:28px;color:var(--ink);margin-bottom:6px;}
   #login-screen .brand span{color:var(--gold);}
-  #login-screen p{color:var(--muted);font-size:13px;margin-bottom:28px;}
-  #login-screen input{width:100%;padding:12px 14px;margin-bottom:12px;border:1px solid var(--line);
+  #login-screen p{color:var(--muted);font-size:13px;margin-bottom:24px;}
+  #login-screen input{width:100%;padding:11px 14px;margin-bottom:11px;border:1px solid var(--line);
     border-radius:8px;background:var(--paper-card);font-size:14px;}
-  #login-screen button{width:100%;padding:13px 0;border:none;border-radius:8px;background:var(--ink);
+  #login-screen button{width:100%;padding:12px 0;border:none;border-radius:8px;background:var(--ink);
     color:#F6F3E9;font-family:'Zilla Slab',serif;font-weight:700;font-size:15px;letter-spacing:1px;cursor:pointer;}
-  #login-error{color:var(--expense);font-size:12px;margin-top:10px;min-height:16px;}
-  #login-screen .hint{margin-top:18px;font-size:11px;color:var(--muted);}
+  #login-error{color:var(--expense);font-size:12px;margin-top:9px;min-height:16px;}
+  #login-screen .hint{margin-top:16px;font-size:11px;color:var(--muted);}
 
   /* ---- App shell ---- */
-  header.topbar{padding:16px 20px 12px;display:flex;justify-content:space-between;align-items:flex-start;
-    border-bottom:1px dashed var(--line);}
-  .brand-block .brand{font-family:'Zilla Slab',serif;font-weight:700;font-size:21px;color:var(--ink);}
+  header.topbar{padding:14px 18px 10px;display:flex;justify-content:space-between;align-items:flex-start;
+    border-bottom:1px dashed var(--line);flex-shrink:0;}
+  .brand-block .brand{font-family:'Zilla Slab',serif;font-weight:700;font-size:19px;color:var(--ink);}
   .brand-block .brand span{color:var(--gold);}
-  .brand-block .sync{font-size:10.5px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px;}
+  .brand-block .sync{font-size:10px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px;}
   .dot{width:6px;height:6px;border-radius:50%;background:var(--income);}
   .user-corner{text-align:right;}
-  .user-pill{font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;}
-  .user-pill .role{display:block;font-size:10px;font-weight:400;color:var(--muted);}
-  .gear{margin-top:4px;font-size:16px;color:var(--muted);cursor:pointer;}
+  .user-pill{font-size:12.5px;font-weight:600;color:var(--ink);cursor:pointer;}
+  .user-pill .role{display:block;font-size:9.5px;font-weight:400;color:var(--muted);}
+  .gear{margin-top:3px;font-size:15px;color:var(--muted);cursor:pointer;}
 
-  main{flex:1;padding:16px 20px 8px;overflow-y:auto;max-height:640px;}
-  .view{display:none;} .view.active{display:block;}
+  main{flex:1;padding:12px 18px 6px;overflow:hidden;display:flex;flex-direction:column;min-height:0;}
+  .view{display:none;flex-direction:column;min-height:0;flex:1;} .view.active{display:flex;}
 
-  .type-row{display:flex;background:var(--paper-card);border:1px solid var(--line);border-radius:10px;padding:4px;margin-bottom:16px;}
-  .type-btn{flex:1;padding:9px 0;text-align:center;font-family:'Zilla Slab',serif;font-weight:600;font-size:13.5px;
+  .type-row{display:flex;background:var(--paper-card);border:1px solid var(--line);border-radius:10px;padding:3px;margin-bottom:10px;flex-shrink:0;}
+  .type-btn{flex:1;padding:8px 0;text-align:center;font-family:'Zilla Slab',serif;font-weight:600;font-size:13px;
     border-radius:7px;cursor:pointer;color:var(--muted);}
   .type-btn.active[data-type="Income"]{background:var(--income-bg);color:var(--income);}
   .type-btn.active[data-type="Expense"]{background:var(--expense-bg);color:var(--expense);}
   .type-btn.active[data-type="Contra"]{background:var(--contra-bg);color:var(--contra);}
 
-  .amount-display{text-align:center;padding:16px 0 14px;}
-  .amount-display .currency{font-size:18px;color:var(--muted);margin-right:4px;vertical-align:5px;}
-  .amount-display .value{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:38px;color:var(--ink);}
+  .amount-display{text-align:center;padding:6px 0 8px;flex-shrink:0;}
+  .amount-display .currency{font-size:16px;color:var(--muted);margin-right:4px;vertical-align:4px;}
+  .amount-display .value{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:32px;color:var(--ink);}
 
-  .section-label{font-size:10.5px;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);
-    margin:12px 0 7px;font-weight:600;}
+  .section-label{font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);
+    margin:7px 0 5px;font-weight:600;flex-shrink:0;}
 
-  .chip-row{display:flex;flex-wrap:wrap;gap:7px;}
-  .chip{padding:7px 13px;border-radius:18px;border:1px solid var(--line);background:var(--paper-card);
-    font-size:12.5px;cursor:pointer;}
+  /* Horizontal-scroll chip rows — never wrap to a new line */
+  .chip-row{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;white-space:nowrap;padding-bottom:3px;flex-shrink:0;}
+  .chip-row::-webkit-scrollbar{height:3px;}
+  .chip-row::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px;}
+  .chip{padding:6px 12px;border-radius:16px;border:1px solid var(--line);background:var(--paper-card);
+    font-size:12px;cursor:pointer;flex-shrink:0;}
   .chip.active{background:var(--ink);border-color:var(--ink);color:#F6F3E9;}
   .chip.add{color:var(--gold);border-style:dashed;}
 
-  .note-input, .keypad-wrap input{width:100%;margin-top:4px;padding:9px 11px;border:1px solid var(--line);
-    border-radius:8px;background:var(--paper-card);font-family:'Inter',sans-serif;font-size:13px;}
+  .field-row{display:flex;gap:8px;flex-shrink:0;}
+  .field-row > div{flex:1;}
+  .note-input{width:100%;margin-top:3px;padding:8px 10px;border:1px solid var(--line);
+    border-radius:8px;background:var(--paper-card);font-family:'Inter',sans-serif;font-size:12.5px;}
 
-  .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:14px;}
-  .key{background:var(--paper-card);border:1px solid var(--line);border-radius:9px;text-align:center;
-    padding:12px 0;font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:500;cursor:pointer;color:var(--ink);user-select:none;}
+  .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px;flex-shrink:0;}
+  .key{background:var(--paper-card);border:1px solid var(--line);border-radius:8px;text-align:center;
+    padding:8px 0;font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500;cursor:pointer;color:var(--ink);user-select:none;}
   .key:active{background:#e3ddc7;}
 
-  .stamp-btn{margin-top:14px;width:100%;padding:14px 0;border:2px solid var(--ink);border-radius:8px;
-    background:transparent;color:var(--ink);font-family:'Zilla Slab',serif;font-weight:700;font-size:15px;
-    letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
+  .stamp-btn{margin-top:8px;width:100%;padding:11px 0;border:2px solid var(--ink);border-radius:8px;
+    background:transparent;color:var(--ink);font-family:'Zilla Slab',serif;font-weight:700;font-size:14px;
+    letter-spacing:2px;text-transform:uppercase;cursor:pointer;flex-shrink:0;}
   .stamp-btn:active{background:var(--ink);color:#F6F3E9;}
-  #save-msg{text-align:center;font-size:12px;margin-top:8px;min-height:16px;}
+  #save-msg{text-align:center;font-size:11.5px;margin-top:5px;min-height:15px;flex-shrink:0;}
 
-  .ledger-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-  .date-pill{font-family:'IBM Plex Mono',monospace;font-size:12.5px;border:1px solid var(--line);
-    background:var(--paper-card);padding:6px 12px;border-radius:20px;}
-  .balance-mini{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--ink);}
+  .ledger-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-shrink:0;}
+  .date-pill{font-family:'IBM Plex Mono',monospace;font-size:12px;border:1px solid var(--line);
+    background:var(--paper-card);padding:5px 11px;border-radius:20px;}
+  .balance-mini{font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:600;color:var(--ink);}
 
-  .entry-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px dashed var(--line);}
-  .entry-left{display:flex;gap:11px;align-items:center;}
-  .entry-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+  /* Bounded inner scroll box — the app frame itself never grows or scrolls */
+  .scroll-box{flex:1;overflow-y:auto;min-height:0;}
+
+  .entry-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line);}
+  .entry-left{display:flex;gap:10px;align-items:center;min-width:0;}
+  .entry-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
   .entry-icon.in{background:var(--income-bg);color:var(--income);}
   .entry-icon.out{background:var(--expense-bg);color:var(--expense);}
   .entry-icon.contra{background:var(--contra-bg);color:var(--contra);}
-  .entry-cat{font-size:13px;font-weight:500;}
-  .entry-meta{font-size:10.5px;color:var(--muted);margin-top:2px;}
-  .entry-amt{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13.5px;}
+  .entry-cat{font-size:12.5px;font-weight:500;}
+  .entry-meta{font-size:10px;color:var(--muted);margin-top:2px;}
+  .entry-amt{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;flex-shrink:0;}
   .entry-amt.in{color:var(--income);} .entry-amt.out{color:var(--expense);} .entry-amt.contra{color:var(--contra);}
 
-  .period-row{display:flex;gap:7px;margin-bottom:14px;}
-  .period-btn{flex:1;text-align:center;padding:8px 0;border:1px solid var(--line);border-radius:8px;
-    font-size:12px;color:var(--muted);cursor:pointer;}
+  .period-row{display:flex;gap:6px;margin-bottom:10px;flex-shrink:0;}
+  .period-btn{flex:1;text-align:center;padding:7px 0;border:1px solid var(--line);border-radius:8px;
+    font-size:11.5px;color:var(--muted);cursor:pointer;}
   .period-btn.active{background:var(--ink);color:#F6F3E9;border-color:var(--ink);}
 
-  .balance-card{background:var(--paper-card);border:1px solid var(--line);border-radius:12px;padding:18px;
-    text-align:center;margin-bottom:14px;}
-  .balance-card .label{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
-  .balance-card .val{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:600;color:var(--ink);margin:6px 0;}
-  .balance-card .split{display:flex;justify-content:center;gap:18px;font-size:11.5px;margin-top:4px;}
+  .opening-row{display:flex;gap:6px;align-items:center;margin-bottom:10px;flex-shrink:0;}
+  .opening-row input{flex:1;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--paper-card);font-size:12px;}
+  .opening-row button{padding:7px 12px;border:none;border-radius:6px;background:var(--ink);color:#F6F3E9;font-size:11.5px;cursor:pointer;}
+
+  .balance-card{background:var(--paper-card);border:1px solid var(--line);border-radius:12px;padding:14px;
+    text-align:center;margin-bottom:10px;flex-shrink:0;}
+  .balance-card .label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
+  .balance-card .val{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;color:var(--ink);margin:5px 0;}
+  .balance-card .split{display:flex;justify-content:center;gap:16px;font-size:11px;margin-top:3px;}
   .split .in{color:var(--income);} .split .out{color:var(--expense);}
 
-  .cat-bar-row{margin-bottom:9px;}
-  .cat-bar-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;}
+  .cat-bar-row{margin-bottom:8px;}
+  .cat-bar-label{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px;}
   .cat-bar-track{height:6px;background:var(--paper-card);border-radius:4px;overflow:hidden;}
   .cat-bar-fill{height:100%;background:var(--gold);}
 
-  nav.tabbar{display:flex;border-top:1px solid var(--line);background:var(--paper-card);}
-  .tab{flex:1;text-align:center;padding:11px 0 9px;font-size:10.5px;color:var(--muted);cursor:pointer;}
-  .tab .glyph{display:block;font-size:17px;margin-bottom:2px;}
+  nav.tabbar{display:flex;border-top:1px solid var(--line);background:var(--paper-card);flex-shrink:0;}
+  .tab{flex:1;text-align:center;padding:10px 0 8px;font-size:10px;color:var(--muted);cursor:pointer;}
+  .tab .glyph{display:block;font-size:16px;margin-bottom:2px;}
   .tab.active{color:var(--ink);font-weight:600;}
+  .tab.hidden{display:none;}
 
   /* ---- Category admin modal ---- */
   #cat-modal{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center;z-index:50;}
   #cat-modal.open{display:flex;}
-  .modal-box{width:380px;max-height:80vh;overflow-y:auto;background:var(--paper);border-radius:14px;padding:18px 20px;}
-  .modal-box h3{font-family:'Zilla Slab',serif;margin:0 0 12px;color:var(--ink);}
-  .modal-close{float:right;cursor:pointer;color:var(--muted);font-size:18px;}
-  .main-cat-block{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:10px;background:var(--paper-card);}
-  .main-cat-title{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:13.5px;}
-  .main-cat-title .tag{font-size:10px;padding:2px 7px;border-radius:10px;background:var(--paper);color:var(--muted);}
-  .sub-list{margin:8px 0 0 4px;font-size:12px;color:var(--muted);}
-  .sub-list div{padding:3px 0;}
-  .add-row{display:flex;gap:6px;margin-top:8px;}
-  .add-row input{flex:1;padding:7px 9px;border:1px solid var(--line);border-radius:6px;font-size:12px;background:var(--paper);}
-  .add-row select{padding:7px 9px;border:1px solid var(--line);border-radius:6px;font-size:12px;background:var(--paper);}
+  .modal-box{width:360px;max-height:80vh;overflow-y:auto;background:var(--paper);border-radius:14px;padding:16px 18px;}
+  .modal-box h3{font-family:'Zilla Slab',serif;margin:0 0 10px;color:var(--ink);font-size:17px;}
+  .modal-close{float:right;cursor:pointer;color:var(--muted);font-size:17px;}
+  .main-cat-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px;}
+  .main-cat-row .tag{font-size:9.5px;padding:2px 7px;border-radius:10px;background:var(--paper-card);color:var(--muted);}
+  .add-row{display:flex;gap:6px;margin-top:10px;}
+  .add-row input{flex:1;padding:7px 9px;border:1px solid var(--line);border-radius:6px;font-size:12px;background:var(--paper-card);}
+  .add-row select{padding:7px 9px;border:1px solid var(--line);border-radius:6px;font-size:12px;background:var(--paper-card);}
   .add-row button{padding:7px 12px;border:none;border-radius:6px;background:var(--ink);color:#F6F3E9;font-size:12px;cursor:pointer;}
-  #owner-only-notice{font-size:12px;color:var(--muted);text-align:center;padding:30px 0;}
+  #owner-only-notice{font-size:12px;color:var(--muted);text-align:center;padding:24px 0;}
 </style>
 </head>
 <body>
@@ -153,7 +164,7 @@
   </div>
 
   <!-- APP -->
-  <div id="app-screen" style="display:none;">
+  <div id="app-screen" style="display:none;height:100%;">
     <header class="topbar">
       <div class="brand-block">
         <div class="brand">Kanakku<span>.</span></div>
@@ -182,11 +193,8 @@
         </div>
 
         <div id="income-expense-fields">
-          <div class="section-label">Main category</div>
+          <div class="section-label">Category</div>
           <div class="chip-row" id="main-cat-chips"></div>
-
-          <div class="section-label">Sub category</div>
-          <div class="chip-row" id="sub-cat-chips"></div>
 
           <div class="section-label">Payment mode</div>
           <div class="chip-row" id="pay-chips"></div>
@@ -199,8 +207,16 @@
           <div class="chip-row" id="to-chips"></div>
         </div>
 
-        <div class="section-label">Note</div>
-        <input class="note-input" id="note-field" placeholder="Optional">
+        <div class="field-row">
+          <div>
+            <div class="section-label">Ref. number</div>
+            <input class="note-input" id="ref-field" placeholder="Optional">
+          </div>
+          <div>
+            <div class="section-label">Note</div>
+            <input class="note-input" id="note-field" placeholder="Optional">
+          </div>
+        </div>
 
         <div class="keypad">
           <div class="key" onclick="keypress('1')">1</div><div class="key" onclick="keypress('2')">2</div><div class="key" onclick="keypress('3')">3</div>
@@ -219,44 +235,51 @@
           <div class="date-pill" id="ledger-date"></div>
           <div class="balance-mini" id="ledger-balance">Balance —</div>
         </div>
-        <div id="ledger-list"></div>
+        <div class="scroll-box"><div id="ledger-list"></div></div>
       </section>
 
-      <!-- DASHBOARD -->
+      <!-- DASHBOARD (Owner / Admin / Manager only) -->
       <section class="view" id="view-dash">
         <div class="period-row">
           <div class="period-btn active" data-period="today" onclick="setPeriod('today',this)">Today</div>
           <div class="period-btn" data-period="week" onclick="setPeriod('week',this)">This week</div>
           <div class="period-btn" data-period="month" onclick="setPeriod('month',this)">This month</div>
         </div>
-        <div class="balance-card">
-          <div class="label">Cash in hand</div>
-          <div class="val" id="dash-balance">₹0</div>
-          <div class="split">
-            <span class="in" id="dash-income">Income ₹0</span>
-            <span class="out" id="dash-expense">Expense ₹0</span>
-          </div>
+        <div class="opening-row" id="opening-row">
+          <span style="font-size:11.5px;color:var(--muted);">Opening balance</span>
+          <input id="opening-input" type="number" placeholder="0">
+          <button onclick="saveOpeningBalance()">Set</button>
         </div>
-        <div class="section-label">By category</div>
-        <div id="dash-categories"></div>
+        <div class="scroll-box">
+          <div class="balance-card">
+            <div class="label">Cash in hand</div>
+            <div class="val" id="dash-balance">₹0</div>
+            <div class="split">
+              <span class="in" id="dash-income">Income ₹0</span>
+              <span class="out" id="dash-expense">Expense ₹0</span>
+            </div>
+          </div>
+          <div class="section-label">By category</div>
+          <div id="dash-categories"></div>
+        </div>
       </section>
     </main>
 
     <nav class="tabbar">
       <div class="tab active" onclick="showView('entry', this)"><span class="glyph">✎</span>Entry</div>
       <div class="tab" onclick="showView('ledger', this)"><span class="glyph">≣</span>Ledger</div>
-      <div class="tab" onclick="showView('dash', this)"><span class="glyph">◔</span>Dashboard</div>
+      <div class="tab" id="dash-tab" onclick="showView('dash', this)"><span class="glyph">◔</span>Dashboard</div>
     </nav>
   </div>
 </div>
 
-<!-- CATEGORY ADMIN MODAL (owner only) -->
+<!-- CATEGORY ADMIN MODAL (Owner / Admin only) -->
 <div id="cat-modal">
   <div class="modal-box">
     <span class="modal-close" onclick="closeCatModal()">&times;</span>
     <h3>Manage categories</h3>
     <div id="cat-modal-body"></div>
-    <div class="section-label">Add main category</div>
+    <div class="section-label">Add category</div>
     <div class="add-row">
       <input id="new-main-name" placeholder="Name">
       <select id="new-main-type"><option value="Income">Income</option><option value="Expense">Expense</option></select>
@@ -268,6 +291,8 @@
 <script>
 // ---------- CONFIG ----------
 const API_URL = 'https://script.google.com/macros/s/AKfycby6mrhV5WDVze8ZzuUIf5gAdeaiQ6ddu2ER8lF_qgIJ4yTa3-ZIRriOwYM3YhO7vLyh/exec'; // ends in /exec
+const DASHBOARD_ROLES = ['Owner', 'Admin', 'Manager'];
+const CATEGORY_ADMIN_ROLES = ['Owner', 'Admin'];
 
 // ---------- STATE ----------
 let currentUser = null;
@@ -275,7 +300,6 @@ let categories = [];
 let accounts = [];
 let currentType = 'Income';
 let selectedMainCat = null;
-let selectedSubCat = null;
 let selectedPayMode = null;
 let selectedFrom = null;
 let selectedTo = null;
@@ -328,10 +352,15 @@ async function enterApp() {
   document.getElementById('app-screen').style.display = 'block';
   document.getElementById('user-name-label').textContent = currentUser.name;
   document.getElementById('user-role-label').textContent = currentUser.role;
-  document.getElementById('gear-icon').style.display = currentUser.role === 'Owner' ? 'block' : 'none';
+  document.getElementById('gear-icon').style.display = CATEGORY_ADMIN_ROLES.includes(currentUser.role) ? 'block' : 'none';
+
+  const canSeeDashboard = DASHBOARD_ROLES.includes(currentUser.role);
+  document.getElementById('dash-tab').classList.toggle('hidden', !canSeeDashboard);
+  document.getElementById('opening-row').style.display = canSeeDashboard ? 'flex' : 'none';
+
   await loadCategories();
   await loadLedger();
-  await loadSummary();
+  if (canSeeDashboard) await loadSummary();
 }
 
 // ---------- CATEGORIES ----------
@@ -351,23 +380,10 @@ function renderTypeFields() {
     const chip = document.createElement('div');
     chip.className = 'chip' + (selectedMainCat === m.id ? ' active' : '');
     chip.textContent = m.name;
-    chip.onclick = () => { selectedMainCat = m.id; selectedSubCat = null; renderTypeFields(); };
+    chip.onclick = () => { selectedMainCat = m.id; renderTypeFields(); };
     mainWrap.appendChild(chip);
   });
-
-  const subWrap = document.getElementById('sub-cat-chips');
-  subWrap.innerHTML = '';
-  const activeMain = mains.find(m => m.id === selectedMainCat) || mains[0];
-  if (activeMain) {
-    if (!selectedMainCat) selectedMainCat = activeMain.id;
-    activeMain.subcategories.forEach(s => {
-      const chip = document.createElement('div');
-      chip.className = 'chip' + (selectedSubCat === s.id ? ' active' : '');
-      chip.textContent = s.name;
-      chip.onclick = () => { selectedSubCat = s.id; renderTypeFields(); };
-      subWrap.appendChild(chip);
-    });
-  }
+  if (!selectedMainCat && mains[0]) selectedMainCat = mains[0].id;
 
   const payWrap = document.getElementById('pay-chips');
   payWrap.innerHTML = '';
@@ -400,7 +416,7 @@ function renderTypeFields() {
 
 function setType(type) {
   currentType = type;
-  selectedMainCat = null; selectedSubCat = null;
+  selectedMainCat = null;
   document.querySelectorAll('.type-btn').forEach(b => b.classList.toggle('active', b.dataset.type === type));
   document.getElementById('income-expense-fields').style.display = type === 'Contra' ? 'none' : 'block';
   document.getElementById('contra-fields').style.display = type === 'Contra' ? 'block' : 'none';
@@ -423,6 +439,7 @@ async function saveEntry() {
   let payload = {
     userId: currentUser.id, userName: currentUser.name,
     type: currentType, amount,
+    refNumber: document.getElementById('ref-field').value.trim(),
     note: document.getElementById('note-field').value.trim()
   };
 
@@ -434,9 +451,7 @@ async function saveEntry() {
   } else {
     if (!selectedMainCat) { showMsg('Pick a category.', true); return; }
     const main = categories.find(c => c.id === selectedMainCat);
-    const sub = main ? main.subcategories.find(s => s.id === selectedSubCat) : null;
     payload.mainCategory = main ? main.name : '';
-    payload.subCategory = sub ? sub.name : '';
     payload.paymentMode = selectedPayMode;
   }
 
@@ -446,8 +461,10 @@ async function saveEntry() {
     showMsg('Saved to sheet.', false);
     amountStr = '0';
     document.getElementById('amt').textContent = '0';
+    document.getElementById('ref-field').value = '';
     document.getElementById('note-field').value = '';
-    loadLedger(); loadSummary();
+    loadLedger();
+    if (DASHBOARD_ROLES.includes(currentUser.role)) loadSummary();
   } else {
     showMsg(result.error || 'Could not save.', true);
   }
@@ -474,14 +491,15 @@ async function loadLedger() {
     const isContra = t.Type === 'Contra';
     const iconClass = isContra ? 'contra' : (isIncome ? 'in' : 'out');
     const icon = isContra ? '⇄' : (isIncome ? '↓' : '↑');
-    const label = isContra ? (t.FromAccount + ' → ' + t.ToAccount) : (t.MainCategory + (t.SubCategory ? ' · ' + t.SubCategory : ''));
+    const label = isContra ? (t.FromAccount + ' → ' + t.ToAccount) : t.MainCategory;
     const sign = isContra ? '' : (isIncome ? '+' : '−');
+    const refPart = t.RefNumber ? ('Ref ' + t.RefNumber + ' · ') : '';
     row.innerHTML = `
       <div class="entry-left">
         <div class="entry-icon ${iconClass}">${icon}</div>
         <div>
           <div class="entry-cat">${label}</div>
-          <div class="entry-meta">${new Date(t.Timestamp).toLocaleTimeString('en-IN', {hour:'numeric',minute:'2-digit'})} · ${t.PaymentMode || ''} · ${t.EnteredByName}</div>
+          <div class="entry-meta">${refPart}${new Date(t.Timestamp).toLocaleTimeString('en-IN', {hour:'numeric',minute:'2-digit'})} · ${t.PaymentMode || ''} · ${t.EnteredByName}</div>
         </div>
       </div>
       <div class="entry-amt ${iconClass}">${sign}₹${Number(t.Amount).toLocaleString('en-IN')}</div>`;
@@ -489,7 +507,7 @@ async function loadLedger() {
   });
 }
 
-// ---------- DASHBOARD ----------
+// ---------- DASHBOARD (Owner / Admin / Manager only) ----------
 async function setPeriod(period, el) {
   currentPeriod = period;
   document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
@@ -498,8 +516,9 @@ async function setPeriod(period, el) {
 }
 
 async function loadSummary() {
-  const result = await api('getSummary', { period: currentPeriod });
-  if (!result.success) return;
+  const result = await api('getSummary', { userId: currentUser.id, period: currentPeriod });
+  if (!result.success) { showMsg(''); return; }
+  document.getElementById('opening-input').value = result.openingBalance || '';
   document.getElementById('dash-balance').textContent = '₹' + result.balance.toLocaleString('en-IN');
   document.getElementById('ledger-balance').textContent = 'Balance ₹' + result.balance.toLocaleString('en-IN');
   document.getElementById('dash-income').textContent = 'Income ₹' + result.income.toLocaleString('en-IN');
@@ -519,8 +538,20 @@ async function loadSummary() {
   });
 }
 
+async function saveOpeningBalance() {
+  const amount = Number(document.getElementById('opening-input').value);
+  if (!amount && amount !== 0) return;
+  const result = await api('setOpeningBalance', {
+    userId: currentUser.id, userName: currentUser.name, amount,
+    date: currentPeriod === 'today' ? new Date().toISOString().slice(0, 10) : undefined
+  });
+  if (result.success) loadSummary();
+  else alert(result.error);
+}
+
 // ---------- TABS ----------
 function showView(name, el) {
+  if (name === 'dash' && !DASHBOARD_ROLES.includes(currentUser.role)) return;
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-' + name).classList.add('active');
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -538,28 +569,16 @@ function closeCatModal() { document.getElementById('cat-modal').classList.remove
 
 function renderCatModal() {
   const body = document.getElementById('cat-modal-body');
-  if (currentUser.role !== 'Owner') {
-    body.innerHTML = '<div id="owner-only-notice">Only the owner can manage categories.</div>';
+  if (!CATEGORY_ADMIN_ROLES.includes(currentUser.role)) {
+    body.innerHTML = '<div id="owner-only-notice">Only the owner or an admin can manage categories.</div>';
     return;
   }
   body.innerHTML = '';
   categories.forEach(m => {
-    const block = document.createElement('div');
-    block.className = 'main-cat-block';
-    block.innerHTML = `
-      <div class="main-cat-title">${m.name} <span class="tag">${m.type}</span></div>
-      <div class="sub-list" id="sub-list-${m.id}"></div>
-      <div class="add-row">
-        <input id="new-sub-${m.id}" placeholder="New sub category">
-        <button onclick="addSubCategory('${m.id}')">Add</button>
-      </div>`;
-    body.appendChild(block);
-    const subList = block.querySelector(`#sub-list-${m.id}`);
-    m.subcategories.forEach(s => {
-      const line = document.createElement('div');
-      line.textContent = '• ' + s.name;
-      subList.appendChild(line);
-    });
+    const row = document.createElement('div');
+    row.className = 'main-cat-row';
+    row.innerHTML = `<span>${m.name}</span><span class="tag">${m.type}</span>`;
+    body.appendChild(row);
   });
 }
 
@@ -570,20 +589,6 @@ async function addMainCategory() {
   const result = await api('addMainCategory', { userId: currentUser.id, name, type });
   if (result.success) {
     document.getElementById('new-main-name').value = '';
-    await loadCategories();
-    renderCatModal();
-  } else {
-    alert(result.error);
-  }
-}
-
-async function addSubCategory(mainCatId) {
-  const input = document.getElementById('new-sub-' + mainCatId);
-  const name = input.value.trim();
-  if (!name) return;
-  const result = await api('addSubCategory', { userId: currentUser.id, mainCatId, name });
-  if (result.success) {
-    input.value = '';
     await loadCategories();
     renderCatModal();
   } else {
