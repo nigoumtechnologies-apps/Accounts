@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Kanakku — Daily Ledger</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A; --paper:#EDE8D8; --paper-card:#F6F3E9; --line:#D8D1BC;
+    --income:#2E7D4F; --income-bg:#E3EFE6;
+    --expense:#B23A2E; --expense-bg:#F5E4E1;
+    --contra:#5F5E5A; --contra-bg:#EDEBE3;
+    --gold:#B8901F; --charcoal:#2A2A28; --muted:#767468;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:#DCD6C4;font-family:'Inter',sans-serif;color:var(--charcoal);
+    display:flex;justify-content:center;padding:24px 12px;}
+  .app{width:420px;background:var(--paper);border-radius:16px;overflow:hidden;
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);min-height:640px;display:flex;flex-direction:column;}
+
+  /* ---- Login ---- */
+  #login-screen{padding:60px 30px;text-align:center;}
+  #login-screen .brand{font-family:'Zilla Slab',serif;font-weight:700;font-size:30px;color:var(--ink);margin-bottom:6px;}
+  #login-screen .brand span{color:var(--gold);}
+  #login-screen p{color:var(--muted);font-size:13px;margin-bottom:28px;}
+  #login-screen input{width:100%;padding:12px 14px;margin-bottom:12px;border:1px solid var(--line);
+    border-radius:8px;background:var(--paper-card);font-size:14px;}
+  #login-screen button{width:100%;padding:13px 0;border:none;border-radius:8px;background:var(--ink);
+    color:#F6F3E9;font-family:'Zilla Slab',serif;font-weight:700;font-size:15px;letter-spacing:1px;cursor:pointer;}
+  #login-error{color:var(--expense);font-size:12px;margin-top:10px;min-height:16px;}
+  #login-screen .hint{margin-top:18px;font-size:11px;color:var(--muted);}
+
+  /* ---- App shell ---- */
+  header.topbar{padding:16px 20px 12px;display:flex;justify-content:space-between;align-items:flex-start;
+    border-bottom:1px dashed var(--line);}
+  .brand-block .brand{font-family:'Zilla Slab',serif;font-weight:700;font-size:21px;color:var(--ink);}
+  .brand-block .brand span{color:var(--gold);}
+  .brand-block .sync{font-size:10.5px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px;}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--income);}
+  .user-corner{text-align:right;}
+  .user-pill{font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;}
+  .user-pill .role{display:block;font-size:10px;font-weight:400;color:var(--muted);}
+  .gear{margin-top:4px;font-size:16px;color:var(--muted);cursor:pointer;}
+
+  main{flex:1;padding:16px 20px 8px;overflow-y:auto;max-height:640px;}
+  .view{display:none;} .view.active{display:block;}
+
+  .type-row{display:flex;background:var(--paper-card);border:1px solid var(--line);border-radius:10px;padding:4px;margin-bottom:16px;}
+  .type-btn{flex:1;padding:9px 0;text-align:center;font-family:'Zilla Slab',serif;font-weight:600;font-size:13.5px;
+    border-radius:7px;cursor:pointer;color:var(--muted);}
+  .type-btn.active[data-type="Income"]{background:var(--income-bg);color:var(--income);}
+  .type-btn.active[data-type="Expense"]{background:var(--expense-bg);color:var(--expense);}
+  .type-btn.active[data-type="Contra"]{background:var(--contra-bg);color:var(--contra);}
+
+  .amount-display{text-align:center;padding:16px 0 14px;}
+  .amount-display .currency{font-size:18px;color:var(--muted);margin-right:4px;vertical-align:5px;}
+  .amount-display .value{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:38px;color:var(--ink);}
+
+  .section-label{font-size:10.5px;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);
+    margin:12px 0 7px;font-weight:600;}
+
+  .chip-row{display:flex;flex-wrap:wrap;gap:7px;}
+  .chip{padding:7px 13px;border-radius:18px;border:1px solid var(--line);background:var(--paper-card);
+    font-size:12.5px;cursor:pointer;}
+  .chip.active{background:var(--ink);border-color:var(--ink);color:#F6F3E9;}
+  .chip.add{color:var(--gold);border-style:dashed;}
+
+  .note-input, .keypad-wrap input{width:100%;margin-top:4px;padding:9px 11px;border:1px solid var(--line);
+    border-radius:8px;background:var(--paper-card);font-family:'Inter',sans-serif;font-size:13px;}
+
+  .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:14px;}
+  .key{background:var(--paper-card);border:1px solid var(--line);border-radius:9px;text-align:center;
+    padding:12px 0;font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:500;cursor:pointer;color:var(--ink);user-select:none;}
+  .key:active{background:#e3ddc7;}
+
+  .stamp-btn{margin-top:14px;width:100%;padding:14px 0;border:2px solid var(--ink);border-radius:8px;
+    background:transparent;color:var(--ink);font-family:'Zilla Slab',serif;font-weight:700;font-size:15px;
+    letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
+  .stamp-btn:active{background:var(--ink);color:#F6F3E9;}
+  #save-msg{text-align:center;font-size:12px;margin-top:8px;min-height:16px;}
+
+  .ledger-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .date-pill{font-family:'IBM Plex Mono',monospace;font-size:12.5px;border:1px solid var(--line);
+    background:var(--paper-card);padding:6px 12px;border-radius:20px;}
+  .balance-mini{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--ink);}
+
+  .entry-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px dashed var(--line);}
+  .entry-left{display:flex;gap:11px;align-items:center;}
+  .entry-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+  .entry-icon.in{background:var(--income-bg);color:var(--income);}
+  .entry-icon.out{background:var(--expense-bg);color:var(--expense);}
+  .entry-icon.contra{background:var(--contra-bg);color:var(--contra);}
+  .entry-cat{font-size:13px;font-weight:500;}
+  .entry-meta{font-size:10.5px;color:var(--muted);margin-top:2px;}
+  .entry-amt{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13.5px;}
+  .entry-amt.in{color:var(--income);} .entry-amt.out{color:var(--expense);} .entry-amt.contra{color:var(--contra);}
+
+  .period-row{display:flex;gap:7px;margin-bottom:14px;}
+  .period-btn{flex:1;text-align:center;padding:8px 0;border:1px solid var(--line);border-radius:8px;
+    font-size:12px;color:var(--muted);cursor:pointer;}
+  .period-btn.active{background:var(--ink);color:#F6F3E9;border-color:var(--ink);}
+
+  .balance-card{background:var(--paper-card);border:1px solid var(--line);border-radius:12px;padding:18px;
+    text-align:center;margin-bottom:14px;}
+  .balance-card .label{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
+  .balance-card .val{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:600;color:var(--ink);margin:6px 0;}
+  .balance-card .split{display:flex;justify-content:center;gap:18px;font-size:11.5px;margin-top:4px;}
+  .split .in{color:var(--income);} .split .out{color:var(--expense);}
+
+  .cat-bar-row{margin-bottom:9px;}
+  .cat-bar-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;}
+  .cat-bar-track{height:6px;background:var(--paper-card);border-radius:4px;overflow:hidden;}
+  .cat-bar-fill{height:100%;background:var(--gold);}
+
+  nav.tabbar{display:flex;border-top:1px solid var(--line);background:var(--paper-card);}
+  .tab{flex:1;text-align:center;padding:11px 0 9px;font-size:10.5px;color:var(--muted);cursor:pointer;}
+  .tab .glyph{display:block;font-size:17px;margin-bottom:2px;}
+  .tab.active{color:var(--ink);font-weight:600;}
+
+  /* ---- Category admin modal ---- */
+  #cat-modal{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center;z-index:50;}
+  #cat-modal.open{display:flex;}
+  .modal-box{width:380px;max-height:80vh;overflow-y:auto;background:var(--paper);border-radius:14px;padding:18px 20px;}
+  .modal-box h3{font-family:'Zilla Slab',serif;margin:0 0 12px;color:var(--ink);}
+  .modal-close{float:right;cursor:pointer;color:var(--muted);font-size:18px;}
+  .main-cat-block{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:10px;background:var(--paper-card);}
+  .main-cat-title{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:13.5px;}
+  .main-cat-title .tag{font-size:10px;padding:2px 7px;border-radius:10px;background:var(--paper);color:var(--muted);}
+  .sub-list{margin:8px 0 0 4px;font-size:12px;color:var(--muted);}
+  .sub-list div{padding:3px 0;}
+  .add-row{display:flex;gap:6px;margin-top:8px;}
+  .add-row input{flex:1;padding:7px 9px;border:1px solid var(--line);border-radius:6px;font-size:12px;background:var(--paper);}
+  .add-row select{padding:7px 9px;border:1px solid var(--line);border-radius:6px;font-size:12px;background:var(--paper);}
+  .add-row button{padding:7px 12px;border:none;border-radius:6px;background:var(--ink);color:#F6F3E9;font-size:12px;cursor:pointer;}
+  #owner-only-notice{font-size:12px;color:var(--muted);text-align:center;padding:30px 0;}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- LOGIN -->
+  <div id="login-screen">
+    <div class="brand">Kanakku<span>.</span></div>
+    <p>Daily ledger for your business</p>
+    <input id="login-name" placeholder="Your name">
+    <input id="login-pin" placeholder="PIN" type="password" inputmode="numeric">
+    <button onclick="doLogin()">Log in</button>
+    <div id="login-error"></div>
+    <div class="hint">Ask the owner if you don't have a PIN yet.</div>
+  </div>
+
+  <!-- APP -->
+  <div id="app-screen" style="display:none;">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand">Kanakku<span>.</span></div>
+        <div class="sync"><span class="dot"></span><span id="sync-label">Saved to sheet</span></div>
+      </div>
+      <div class="user-corner">
+        <div class="user-pill" onclick="logout()" title="Tap to log out">
+          <span id="user-name-label">—</span>
+          <span class="role" id="user-role-label"></span>
+        </div>
+        <div class="gear" id="gear-icon" onclick="openCatModal()" title="Manage categories" style="display:none;">⚙</div>
+      </div>
+    </header>
+
+    <main>
+      <!-- ENTRY -->
+      <section class="view active" id="view-entry">
+        <div class="type-row" id="type-row">
+          <div class="type-btn active" data-type="Income" onclick="setType('Income')">Income</div>
+          <div class="type-btn" data-type="Expense" onclick="setType('Expense')">Expense</div>
+          <div class="type-btn" data-type="Contra" onclick="setType('Contra')">Contra</div>
+        </div>
+
+        <div class="amount-display">
+          <span class="currency">₹</span><span class="value" id="amt">0</span>
+        </div>
+
+        <div id="income-expense-fields">
+          <div class="section-label">Main category</div>
+          <div class="chip-row" id="main-cat-chips"></div>
+
+          <div class="section-label">Sub category</div>
+          <div class="chip-row" id="sub-cat-chips"></div>
+
+          <div class="section-label">Payment mode</div>
+          <div class="chip-row" id="pay-chips"></div>
+        </div>
+
+        <div id="contra-fields" style="display:none;">
+          <div class="section-label">From account</div>
+          <div class="chip-row" id="from-chips"></div>
+          <div class="section-label">To account</div>
+          <div class="chip-row" id="to-chips"></div>
+        </div>
+
+        <div class="section-label">Note</div>
+        <input class="note-input" id="note-field" placeholder="Optional">
+
+        <div class="keypad">
+          <div class="key" onclick="keypress('1')">1</div><div class="key" onclick="keypress('2')">2</div><div class="key" onclick="keypress('3')">3</div>
+          <div class="key" onclick="keypress('4')">4</div><div class="key" onclick="keypress('5')">5</div><div class="key" onclick="keypress('6')">6</div>
+          <div class="key" onclick="keypress('7')">7</div><div class="key" onclick="keypress('8')">8</div><div class="key" onclick="keypress('9')">9</div>
+          <div class="key" onclick="keypress('.')">.</div><div class="key" onclick="keypress('0')">0</div><div class="key" onclick="keypress('back')">⌫</div>
+        </div>
+
+        <button class="stamp-btn" onclick="saveEntry()">Save entry</button>
+        <div id="save-msg"></div>
+      </section>
+
+      <!-- LEDGER -->
+      <section class="view" id="view-ledger">
+        <div class="ledger-header">
+          <div class="date-pill" id="ledger-date"></div>
+          <div class="balance-mini" id="ledger-balance">Balance —</div>
+        </div>
+        <div id="ledger-list"></div>
+      </section>
+
+      <!-- DASHBOARD -->
+      <section class="view" id="view-dash">
+        <div class="period-row">
+          <div class="period-btn active" data-period="today" onclick="setPeriod('today',this)">Today</div>
+          <div class="period-btn" data-period="week" onclick="setPeriod('week',this)">This week</div>
+          <div class="period-btn" data-period="month" onclick="setPeriod('month',this)">This month</div>
+        </div>
+        <div class="balance-card">
+          <div class="label">Cash in hand</div>
+          <div class="val" id="dash-balance">₹0</div>
+          <div class="split">
+            <span class="in" id="dash-income">Income ₹0</span>
+            <span class="out" id="dash-expense">Expense ₹0</span>
+          </div>
+        </div>
+        <div class="section-label">By category</div>
+        <div id="dash-categories"></div>
+      </section>
+    </main>
+
+    <nav class="tabbar">
+      <div class="tab active" onclick="showView('entry', this)"><span class="glyph">✎</span>Entry</div>
+      <div class="tab" onclick="showView('ledger', this)"><span class="glyph">≣</span>Ledger</div>
+      <div class="tab" onclick="showView('dash', this)"><span class="glyph">◔</span>Dashboard</div>
+    </nav>
+  </div>
+</div>
+
+<!-- CATEGORY ADMIN MODAL (owner only) -->
+<div id="cat-modal">
+  <div class="modal-box">
+    <span class="modal-close" onclick="closeCatModal()">&times;</span>
+    <h3>Manage categories</h3>
+    <div id="cat-modal-body"></div>
+    <div class="section-label">Add main category</div>
+    <div class="add-row">
+      <input id="new-main-name" placeholder="Name">
+      <select id="new-main-type"><option value="Income">Income</option><option value="Expense">Expense</option></select>
+      <button onclick="addMainCategory()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- CONFIG ----------
+const API_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE'; // ends in /exec
+
+// ---------- STATE ----------
+let currentUser = null;
+let categories = [];
+let accounts = [];
+let currentType = 'Income';
+let selectedMainCat = null;
+let selectedSubCat = null;
+let selectedPayMode = null;
+let selectedFrom = null;
+let selectedTo = null;
+let amountStr = '0';
+let currentPeriod = 'today';
+
+// ---------- API ----------
+async function api(action, payload) {
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' }, // avoids CORS preflight on Apps Script
+    body: JSON.stringify({ action, payload })
+  });
+  return res.json();
+}
+
+// ---------- LOGIN ----------
+async function doLogin() {
+  const name = document.getElementById('login-name').value.trim();
+  const pin = document.getElementById('login-pin').value.trim();
+  if (!name || !pin) {
+    document.getElementById('login-error').textContent = 'Enter your name and PIN.';
+    return;
+  }
+  document.getElementById('login-error').textContent = 'Checking…';
+  try {
+    const result = await api('login', { name, pin });
+    if (!result.success) {
+      document.getElementById('login-error').textContent = result.error || 'Login failed.';
+      return;
+    }
+    currentUser = result.user;
+    localStorage.setItem('kanakku_user', JSON.stringify(currentUser));
+    enterApp();
+  } catch (err) {
+    document.getElementById('login-error').textContent = 'Could not reach the server. Check API_URL.';
+  }
+}
+
+function logout() {
+  if (!confirm('Log out?')) return;
+  localStorage.removeItem('kanakku_user');
+  currentUser = null;
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'block';
+}
+
+async function enterApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display = 'block';
+  document.getElementById('user-name-label').textContent = currentUser.name;
+  document.getElementById('user-role-label').textContent = currentUser.role;
+  document.getElementById('gear-icon').style.display = currentUser.role === 'Owner' ? 'block' : 'none';
+  await loadCategories();
+  await loadLedger();
+  await loadSummary();
+}
+
+// ---------- CATEGORIES ----------
+async function loadCategories() {
+  const result = await api('getCategories', {});
+  if (!result.success) return;
+  categories = result.categories;
+  accounts = result.accounts;
+  renderTypeFields();
+}
+
+function renderTypeFields() {
+  const mains = categories.filter(c => c.type === currentType);
+  const mainWrap = document.getElementById('main-cat-chips');
+  mainWrap.innerHTML = '';
+  mains.forEach(m => {
+    const chip = document.createElement('div');
+    chip.className = 'chip' + (selectedMainCat === m.id ? ' active' : '');
+    chip.textContent = m.name;
+    chip.onclick = () => { selectedMainCat = m.id; selectedSubCat = null; renderTypeFields(); };
+    mainWrap.appendChild(chip);
+  });
+
+  const subWrap = document.getElementById('sub-cat-chips');
+  subWrap.innerHTML = '';
+  const activeMain = mains.find(m => m.id === selectedMainCat) || mains[0];
+  if (activeMain) {
+    if (!selectedMainCat) selectedMainCat = activeMain.id;
+    activeMain.subcategories.forEach(s => {
+      const chip = document.createElement('div');
+      chip.className = 'chip' + (selectedSubCat === s.id ? ' active' : '');
+      chip.textContent = s.name;
+      chip.onclick = () => { selectedSubCat = s.id; renderTypeFields(); };
+      subWrap.appendChild(chip);
+    });
+  }
+
+  const payWrap = document.getElementById('pay-chips');
+  payWrap.innerHTML = '';
+  accounts.forEach(a => {
+    const chip = document.createElement('div');
+    chip.className = 'chip' + (selectedPayMode === a ? ' active' : '');
+    chip.textContent = a;
+    chip.onclick = () => { selectedPayMode = a; renderTypeFields(); };
+    payWrap.appendChild(chip);
+  });
+  if (!selectedPayMode) selectedPayMode = accounts[0];
+
+  const fromWrap = document.getElementById('from-chips');
+  const toWrap = document.getElementById('to-chips');
+  fromWrap.innerHTML = ''; toWrap.innerHTML = '';
+  accounts.forEach(a => {
+    const f = document.createElement('div');
+    f.className = 'chip' + (selectedFrom === a ? ' active' : '');
+    f.textContent = a;
+    f.onclick = () => { selectedFrom = a; renderTypeFields(); };
+    fromWrap.appendChild(f);
+
+    const t = document.createElement('div');
+    t.className = 'chip' + (selectedTo === a ? ' active' : '');
+    t.textContent = a;
+    t.onclick = () => { selectedTo = a; renderTypeFields(); };
+    toWrap.appendChild(t);
+  });
+}
+
+function setType(type) {
+  currentType = type;
+  selectedMainCat = null; selectedSubCat = null;
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.toggle('active', b.dataset.type === type));
+  document.getElementById('income-expense-fields').style.display = type === 'Contra' ? 'none' : 'block';
+  document.getElementById('contra-fields').style.display = type === 'Contra' ? 'block' : 'none';
+  renderTypeFields();
+}
+
+// ---------- KEYPAD ----------
+function keypress(k) {
+  if (k === 'back') { amountStr = amountStr.slice(0, -1) || '0'; }
+  else if (k === '.') { if (!amountStr.includes('.')) amountStr += '.'; }
+  else { amountStr = amountStr === '0' ? k : amountStr + k; }
+  document.getElementById('amt').textContent = Number(amountStr).toLocaleString('en-IN');
+}
+
+// ---------- SAVE ----------
+async function saveEntry() {
+  const amount = Number(amountStr);
+  if (!amount) { showMsg('Enter an amount.', true); return; }
+
+  let payload = {
+    userId: currentUser.id, userName: currentUser.name,
+    type: currentType, amount,
+    note: document.getElementById('note-field').value.trim()
+  };
+
+  if (currentType === 'Contra') {
+    if (!selectedFrom || !selectedTo) { showMsg('Pick a from and to account.', true); return; }
+    if (selectedFrom === selectedTo) { showMsg('From and to accounts must differ.', true); return; }
+    payload.fromAccount = selectedFrom;
+    payload.toAccount = selectedTo;
+  } else {
+    if (!selectedMainCat) { showMsg('Pick a category.', true); return; }
+    const main = categories.find(c => c.id === selectedMainCat);
+    const sub = main ? main.subcategories.find(s => s.id === selectedSubCat) : null;
+    payload.mainCategory = main ? main.name : '';
+    payload.subCategory = sub ? sub.name : '';
+    payload.paymentMode = selectedPayMode;
+  }
+
+  showMsg('Saving…', false);
+  const result = await api('saveTransaction', payload);
+  if (result.success) {
+    showMsg('Saved to sheet.', false);
+    amountStr = '0';
+    document.getElementById('amt').textContent = '0';
+    document.getElementById('note-field').value = '';
+    loadLedger(); loadSummary();
+  } else {
+    showMsg(result.error || 'Could not save.', true);
+  }
+}
+
+function showMsg(text, isError) {
+  const el = document.getElementById('save-msg');
+  el.textContent = text;
+  el.style.color = isError ? 'var(--expense)' : 'var(--income)';
+}
+
+// ---------- LEDGER ----------
+async function loadLedger() {
+  const today = new Date().toISOString().slice(0, 10);
+  document.getElementById('ledger-date').textContent = 'Today, ' + new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  const result = await api('listTransactions', { date: today });
+  if (!result.success) return;
+  const list = document.getElementById('ledger-list');
+  list.innerHTML = '';
+  result.transactions.forEach(t => {
+    const row = document.createElement('div');
+    row.className = 'entry-row';
+    const isIncome = t.Type === 'Income';
+    const isContra = t.Type === 'Contra';
+    const iconClass = isContra ? 'contra' : (isIncome ? 'in' : 'out');
+    const icon = isContra ? '⇄' : (isIncome ? '↓' : '↑');
+    const label = isContra ? (t.FromAccount + ' → ' + t.ToAccount) : (t.MainCategory + (t.SubCategory ? ' · ' + t.SubCategory : ''));
+    const sign = isContra ? '' : (isIncome ? '+' : '−');
+    row.innerHTML = `
+      <div class="entry-left">
+        <div class="entry-icon ${iconClass}">${icon}</div>
+        <div>
+          <div class="entry-cat">${label}</div>
+          <div class="entry-meta">${new Date(t.Timestamp).toLocaleTimeString('en-IN', {hour:'numeric',minute:'2-digit'})} · ${t.PaymentMode || ''} · ${t.EnteredByName}</div>
+        </div>
+      </div>
+      <div class="entry-amt ${iconClass}">${sign}₹${Number(t.Amount).toLocaleString('en-IN')}</div>`;
+    list.appendChild(row);
+  });
+}
+
+// ---------- DASHBOARD ----------
+async function setPeriod(period, el) {
+  currentPeriod = period;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  loadSummary();
+}
+
+async function loadSummary() {
+  const result = await api('getSummary', { period: currentPeriod });
+  if (!result.success) return;
+  document.getElementById('dash-balance').textContent = '₹' + result.balance.toLocaleString('en-IN');
+  document.getElementById('ledger-balance').textContent = 'Balance ₹' + result.balance.toLocaleString('en-IN');
+  document.getElementById('dash-income').textContent = 'Income ₹' + result.income.toLocaleString('en-IN');
+  document.getElementById('dash-expense').textContent = 'Expense ₹' + result.expense.toLocaleString('en-IN');
+
+  const catWrap = document.getElementById('dash-categories');
+  catWrap.innerHTML = '';
+  const entries = Object.entries(result.byCategory);
+  const max = Math.max(...entries.map(e => e[1]), 1);
+  entries.sort((a, b) => b[1] - a[1]).forEach(([name, val]) => {
+    const row = document.createElement('div');
+    row.className = 'cat-bar-row';
+    row.innerHTML = `
+      <div class="cat-bar-label"><span>${name}</span><span>₹${Number(val).toLocaleString('en-IN')}</span></div>
+      <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${(val / max * 100).toFixed(0)}%;"></div></div>`;
+    catWrap.appendChild(row);
+  });
+}
+
+// ---------- TABS ----------
+function showView(name, el) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  if (name === 'ledger') loadLedger();
+  if (name === 'dash') loadSummary();
+}
+
+// ---------- CATEGORY ADMIN MODAL ----------
+function openCatModal() {
+  renderCatModal();
+  document.getElementById('cat-modal').classList.add('open');
+}
+function closeCatModal() { document.getElementById('cat-modal').classList.remove('open'); }
+
+function renderCatModal() {
+  const body = document.getElementById('cat-modal-body');
+  if (currentUser.role !== 'Owner') {
+    body.innerHTML = '<div id="owner-only-notice">Only the owner can manage categories.</div>';
+    return;
+  }
+  body.innerHTML = '';
+  categories.forEach(m => {
+    const block = document.createElement('div');
+    block.className = 'main-cat-block';
+    block.innerHTML = `
+      <div class="main-cat-title">${m.name} <span class="tag">${m.type}</span></div>
+      <div class="sub-list" id="sub-list-${m.id}"></div>
+      <div class="add-row">
+        <input id="new-sub-${m.id}" placeholder="New sub category">
+        <button onclick="addSubCategory('${m.id}')">Add</button>
+      </div>`;
+    body.appendChild(block);
+    const subList = block.querySelector(`#sub-list-${m.id}`);
+    m.subcategories.forEach(s => {
+      const line = document.createElement('div');
+      line.textContent = '• ' + s.name;
+      subList.appendChild(line);
+    });
+  });
+}
+
+async function addMainCategory() {
+  const name = document.getElementById('new-main-name').value.trim();
+  const type = document.getElementById('new-main-type').value;
+  if (!name) return;
+  const result = await api('addMainCategory', { userId: currentUser.id, name, type });
+  if (result.success) {
+    document.getElementById('new-main-name').value = '';
+    await loadCategories();
+    renderCatModal();
+  } else {
+    alert(result.error);
+  }
+}
+
+async function addSubCategory(mainCatId) {
+  const input = document.getElementById('new-sub-' + mainCatId);
+  const name = input.value.trim();
+  if (!name) return;
+  const result = await api('addSubCategory', { userId: currentUser.id, mainCatId, name });
+  if (result.success) {
+    input.value = '';
+    await loadCategories();
+    renderCatModal();
+  } else {
+    alert(result.error);
+  }
+}
+
+// ---------- BOOT ----------
+window.onload = () => {
+  const saved = localStorage.getItem('kanakku_user');
+  if (saved) { currentUser = JSON.parse(saved); enterApp(); }
+};
+</script>
+</body>
+</html>
