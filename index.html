@@ -12,14 +12,15 @@
     --income:#2E7D4F; --income-bg:#E3EFE6;
     --expense:#B23A2E; --expense-bg:#F5E4E1;
     --contra:#5F5E5A; --contra-bg:#EDEBE3;
-    --gold:#B8901F; --charcoal:#2A2A28; --muted:#767468;
+    --gold:#B8901F; --charcoal:#2A2A28; --muted:#5B5A52;
   }
   *{box-sizing:border-box;}
   html, body{height:100%;margin:0;}
-  body{background:#DCD6C4;font-family:'Inter',sans-serif;color:var(--charcoal);
-    display:flex;justify-content:center;align-items:center;padding:12px;overflow:hidden;}
-  .app{width:420px;height:100%;max-height:660px;background:var(--paper);border-radius:16px;overflow:hidden;
-    box-shadow:0 20px 50px rgba(0,0,0,0.25);display:flex;flex-direction:column;}
+  body{background:var(--paper);font-family:'Inter',sans-serif;color:var(--charcoal);overflow:hidden;}
+  /* Full-bleed app shell — no outer frame, no decorative gap around it.
+     Centers with a sensible max-width on wide screens, fills the viewport on mobile. */
+  .app{width:100%;max-width:480px;height:100%;margin:0 auto;background:var(--paper);
+    display:flex;flex-direction:column;}
 
   /* ---- Login ---- */
   #login-screen{padding:50px 30px;text-align:center;}
@@ -38,8 +39,12 @@
     border-bottom:1px dashed var(--line);flex-shrink:0;}
   .brand-block .brand{font-family:'Zilla Slab',serif;font-weight:700;font-size:19px;color:var(--ink);}
   .brand-block .brand span{color:var(--gold);}
-  .brand-block .sync{font-size:10px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:5px;}
-  .dot{width:6px;height:6px;border-radius:50%;background:var(--income);}
+  .brand-block .sync{font-size:10px;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:6px;}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--income);flex-shrink:0;}
+  .refresh-btn{background:none;border:none;color:var(--ink);font-size:13px;cursor:pointer;padding:0;
+    display:flex;align-items:center;gap:3px;}
+  .refresh-btn.spinning .glyph{display:inline-block;animation:spin .6s linear;}
+  @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
   .user-corner{text-align:right;}
   .user-pill{font-size:12.5px;font-weight:600;color:var(--ink);cursor:pointer;}
   .user-pill .role{display:block;font-size:9.5px;font-weight:400;color:var(--muted);}
@@ -62,19 +67,32 @@
   .section-label{font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);
     margin:7px 0 5px;font-weight:600;flex-shrink:0;}
 
-  /* Horizontal-scroll chip rows — never wrap to a new line */
+  /* Horizontal-scroll chip rows (payment mode / accounts) */
   .chip-row{display:flex;flex-wrap:nowrap;gap:6px;overflow-x:auto;white-space:nowrap;padding-bottom:3px;flex-shrink:0;}
   .chip-row::-webkit-scrollbar{height:3px;}
   .chip-row::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px;}
   .chip{padding:6px 12px;border-radius:16px;border:1px solid var(--line);background:var(--paper-card);
     font-size:12px;cursor:pointer;flex-shrink:0;}
   .chip.active{background:var(--ink);border-color:var(--ink);color:#F6F3E9;}
-  .chip.add{color:var(--gold);border-style:dashed;}
+
+  /* Searchable category dropdown */
+  .combo{position:relative;flex-shrink:0;}
+  .combo input{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;
+    background:var(--paper-card);font-family:'Inter',sans-serif;font-size:13px;color:var(--charcoal);}
+  .combo-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--paper-card);
+    border:1px solid var(--line);border-radius:8px;max-height:150px;overflow-y:auto;z-index:30;display:none;
+    box-shadow:0 8px 20px rgba(0,0,0,0.12);}
+  .combo-dropdown.open{display:block;}
+  .combo-item{padding:9px 12px;font-size:13px;cursor:pointer;}
+  .combo-item:hover{background:var(--ink);color:#F6F3E9;}
+  .combo-item.empty{color:var(--muted);cursor:default;}
+  .combo-item.empty:hover{background:none;color:var(--muted);}
 
   .field-row{display:flex;gap:8px;flex-shrink:0;}
   .field-row > div{flex:1;}
   .note-input{width:100%;margin-top:3px;padding:8px 10px;border:1px solid var(--line);
-    border-radius:8px;background:var(--paper-card);font-family:'Inter',sans-serif;font-size:12.5px;}
+    border-radius:8px;background:var(--paper-card);font-family:'Inter',sans-serif;font-size:12.5px;color:var(--charcoal);}
+  .note-input:disabled{color:var(--muted);background:var(--paper);}
 
   .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px;flex-shrink:0;}
   .key{background:var(--paper-card);border:1px solid var(--line);border-radius:8px;text-align:center;
@@ -105,6 +123,8 @@
   .entry-meta{font-size:10px;color:var(--muted);margin-top:2px;}
   .entry-amt{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;flex-shrink:0;}
   .entry-amt.in{color:var(--income);} .entry-amt.out{color:var(--expense);} .entry-amt.contra{color:var(--contra);}
+  .empty-state{text-align:center;color:var(--muted);font-size:12.5px;padding:30px 10px;}
+  .error-state{text-align:center;color:var(--expense);font-size:12px;padding:14px 10px;}
 
   .period-row{display:flex;gap:6px;margin-bottom:10px;flex-shrink:0;}
   .period-btn{flex:1;text-align:center;padding:7px 0;border:1px solid var(--line);border-radius:8px;
@@ -126,17 +146,21 @@
   .cat-bar-label{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px;}
   .cat-bar-track{height:6px;background:var(--paper-card);border-radius:4px;overflow:hidden;}
   .cat-bar-fill{height:100%;background:var(--gold);}
+  #dash-msg{text-align:center;font-size:11.5px;margin-bottom:8px;min-height:15px;flex-shrink:0;}
 
-  nav.tabbar{display:flex;border-top:1px solid var(--line);background:var(--paper-card);flex-shrink:0;}
-  .tab{flex:1;text-align:center;padding:10px 0 8px;font-size:10px;color:var(--muted);cursor:pointer;}
-  .tab .glyph{display:block;font-size:16px;margin-bottom:2px;}
-  .tab.active{color:var(--ink);font-weight:600;}
+  /* Bottom tab bar — bumped contrast/size for visibility */
+  nav.tabbar{display:flex;border-top:2px solid var(--ink);background:var(--paper-card);flex-shrink:0;}
+  .tab{flex:1;text-align:center;padding:11px 0 9px;font-size:11.5px;font-weight:600;color:var(--muted);
+    cursor:pointer;position:relative;}
+  .tab .glyph{display:block;font-size:19px;margin-bottom:3px;}
+  .tab.active{color:var(--ink);}
+  .tab.active::before{content:'';position:absolute;top:-2px;left:20%;right:20%;height:2px;background:var(--gold);}
   .tab.hidden{display:none;}
 
   /* ---- Category admin modal ---- */
   #cat-modal{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center;z-index:50;}
   #cat-modal.open{display:flex;}
-  .modal-box{width:360px;max-height:80vh;overflow-y:auto;background:var(--paper);border-radius:14px;padding:16px 18px;}
+  .modal-box{width:360px;max-width:90vw;max-height:80vh;overflow-y:auto;background:var(--paper);border-radius:14px;padding:16px 18px;}
   .modal-box h3{font-family:'Zilla Slab',serif;margin:0 0 10px;color:var(--ink);font-size:17px;}
   .modal-close{float:right;cursor:pointer;color:var(--muted);font-size:17px;}
   .main-cat-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px;}
@@ -168,7 +192,12 @@
     <header class="topbar">
       <div class="brand-block">
         <div class="brand">Kanakku<span>.</span></div>
-        <div class="sync"><span class="dot"></span><span id="sync-label">Saved to sheet</span></div>
+        <div class="sync">
+          <span class="dot" id="sync-dot"></span><span id="sync-label">Saved to sheet</span>
+          <button class="refresh-btn" id="refresh-btn" onclick="refreshAll()" title="Refresh data">
+            <span class="glyph">⟳</span>Refresh
+          </button>
+        </div>
       </div>
       <div class="user-corner">
         <div class="user-pill" onclick="logout()" title="Tap to log out">
@@ -192,9 +221,21 @@
           <span class="currency">₹</span><span class="value" id="amt">0</span>
         </div>
 
+        <div class="field-row">
+          <div>
+            <div class="section-label">Date</div>
+            <input type="date" class="note-input" id="entry-date" onchange="onDateChanged()">
+          </div>
+        </div>
+
         <div id="income-expense-fields">
           <div class="section-label">Category</div>
-          <div class="chip-row" id="main-cat-chips"></div>
+          <div class="combo">
+            <input type="text" id="cat-search" placeholder="Type to search category…"
+              oninput="filterCatDropdown()" onfocus="filterCatDropdown()"
+              onblur="setTimeout(hideCatDropdown, 150)">
+            <div class="combo-dropdown" id="cat-dropdown"></div>
+          </div>
 
           <div class="section-label">Payment mode</div>
           <div class="chip-row" id="pay-chips"></div>
@@ -232,8 +273,8 @@
       <!-- LEDGER -->
       <section class="view" id="view-ledger">
         <div class="ledger-header">
-          <div class="date-pill" id="ledger-date"></div>
-          <div class="balance-mini" id="ledger-balance">Balance —</div>
+          <div class="date-pill" id="ledger-date">Today</div>
+          <div class="balance-mini" id="ledger-balance"></div>
         </div>
         <div class="scroll-box"><div id="ledger-list"></div></div>
       </section>
@@ -245,6 +286,7 @@
           <div class="period-btn" data-period="week" onclick="setPeriod('week',this)">This week</div>
           <div class="period-btn" data-period="month" onclick="setPeriod('month',this)">This month</div>
         </div>
+        <div id="dash-msg"></div>
         <div class="opening-row" id="opening-row">
           <span style="font-size:11.5px;color:var(--muted);">Opening balance</span>
           <input id="opening-input" type="number" placeholder="0">
@@ -290,9 +332,10 @@
 
 <script>
 // ---------- CONFIG ----------
-const API_URL = 'https://script.google.com/macros/s/AKfycby6mrhV5WDVze8ZzuUIf5gAdeaiQ6ddu2ER8lF_qgIJ4yTa3-ZIRriOwYM3YhO7vLyh/exec'; // ends in /exec
+const API_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE'; // ends in /exec
 const DASHBOARD_ROLES = ['Owner', 'Admin', 'Manager'];
 const CATEGORY_ADMIN_ROLES = ['Owner', 'Admin'];
+const DATE_EDIT_ROLES = ['Owner', 'Admin']; // who can backdate an entry
 
 // ---------- STATE ----------
 let currentUser = null;
@@ -305,15 +348,20 @@ let selectedFrom = null;
 let selectedTo = null;
 let amountStr = '0';
 let currentPeriod = 'today';
+let dateTouched = false; // true once an admin explicitly changes the date field
 
 // ---------- API ----------
 async function api(action, payload) {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' }, // avoids CORS preflight on Apps Script
-    body: JSON.stringify({ action, payload })
-  });
-  return res.json();
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' }, // avoids CORS preflight on Apps Script
+      body: JSON.stringify({ action, payload })
+    });
+    return await res.json();
+  } catch (err) {
+    return { success: false, error: 'Network error — could not reach the server.' };
+  }
 }
 
 // ---------- LOGIN ----------
@@ -325,18 +373,14 @@ async function doLogin() {
     return;
   }
   document.getElementById('login-error').textContent = 'Checking…';
-  try {
-    const result = await api('login', { name, pin });
-    if (!result.success) {
-      document.getElementById('login-error').textContent = result.error || 'Login failed.';
-      return;
-    }
-    currentUser = result.user;
-    localStorage.setItem('kanakku_user', JSON.stringify(currentUser));
-    enterApp();
-  } catch (err) {
-    document.getElementById('login-error').textContent = 'Could not reach the server. Check API_URL.';
+  const result = await api('login', { name, pin });
+  if (!result.success) {
+    document.getElementById('login-error').textContent = result.error || 'Login failed.';
+    return;
   }
+  currentUser = result.user;
+  localStorage.setItem('kanakku_user', JSON.stringify(currentUser));
+  enterApp();
 }
 
 function logout() {
@@ -358,9 +402,34 @@ async function enterApp() {
   document.getElementById('dash-tab').classList.toggle('hidden', !canSeeDashboard);
   document.getElementById('opening-row').style.display = canSeeDashboard ? 'flex' : 'none';
 
+  const canBackdate = DATE_EDIT_ROLES.includes(currentUser.role);
+  const dateInput = document.getElementById('entry-date');
+  dateInput.value = localTodayISO();
+  dateInput.disabled = !canBackdate;
+
+  await refreshAll();
+}
+
+function localTodayISO() {
+  // Local calendar date (not UTC) for the date-picker's cosmetic default —
+  // the actual "today" used for saving/listing is always resolved server-side.
+  const d = new Date();
+  const off = d.getTimezoneOffset();
+  return new Date(d.getTime() - off * 60000).toISOString().slice(0, 10);
+}
+
+function onDateChanged() {
+  dateTouched = true;
+}
+
+// ---------- REFRESH ----------
+async function refreshAll() {
+  const btn = document.getElementById('refresh-btn');
+  btn.classList.add('spinning');
   await loadCategories();
   await loadLedger();
-  if (canSeeDashboard) await loadSummary();
+  if (DASHBOARD_ROLES.includes(currentUser.role)) await loadSummary();
+  btn.classList.remove('spinning');
 }
 
 // ---------- CATEGORIES ----------
@@ -369,29 +438,18 @@ async function loadCategories() {
   if (!result.success) return;
   categories = result.categories;
   accounts = result.accounts;
-  renderTypeFields();
+  renderPayAndAccountChips();
+  filterCatDropdown();
 }
 
-function renderTypeFields() {
-  const mains = categories.filter(c => c.type === currentType);
-  const mainWrap = document.getElementById('main-cat-chips');
-  mainWrap.innerHTML = '';
-  mains.forEach(m => {
-    const chip = document.createElement('div');
-    chip.className = 'chip' + (selectedMainCat === m.id ? ' active' : '');
-    chip.textContent = m.name;
-    chip.onclick = () => { selectedMainCat = m.id; renderTypeFields(); };
-    mainWrap.appendChild(chip);
-  });
-  if (!selectedMainCat && mains[0]) selectedMainCat = mains[0].id;
-
+function renderPayAndAccountChips() {
   const payWrap = document.getElementById('pay-chips');
   payWrap.innerHTML = '';
   accounts.forEach(a => {
     const chip = document.createElement('div');
     chip.className = 'chip' + (selectedPayMode === a ? ' active' : '');
     chip.textContent = a;
-    chip.onclick = () => { selectedPayMode = a; renderTypeFields(); };
+    chip.onclick = () => { selectedPayMode = a; renderPayAndAccountChips(); };
     payWrap.appendChild(chip);
   });
   if (!selectedPayMode) selectedPayMode = accounts[0];
@@ -403,24 +461,56 @@ function renderTypeFields() {
     const f = document.createElement('div');
     f.className = 'chip' + (selectedFrom === a ? ' active' : '');
     f.textContent = a;
-    f.onclick = () => { selectedFrom = a; renderTypeFields(); };
+    f.onclick = () => { selectedFrom = a; renderPayAndAccountChips(); };
     fromWrap.appendChild(f);
 
     const t = document.createElement('div');
     t.className = 'chip' + (selectedTo === a ? ' active' : '');
     t.textContent = a;
-    t.onclick = () => { selectedTo = a; renderTypeFields(); };
+    t.onclick = () => { selectedTo = a; renderPayAndAccountChips(); };
     toWrap.appendChild(t);
   });
+}
+
+// ---------- SEARCHABLE CATEGORY DROPDOWN ----------
+function filterCatDropdown() {
+  const query = document.getElementById('cat-search').value.trim().toLowerCase();
+  const mains = categories.filter(c => c.type === currentType);
+  const matches = query ? mains.filter(m => m.name.toLowerCase().includes(query)) : mains;
+
+  const dropdown = document.getElementById('cat-dropdown');
+  dropdown.innerHTML = '';
+  if (matches.length === 0) {
+    dropdown.innerHTML = '<div class="combo-item empty">No matching category</div>';
+  } else {
+    matches.forEach(m => {
+      const item = document.createElement('div');
+      item.className = 'combo-item';
+      item.textContent = m.name;
+      item.onmousedown = () => selectCategory(m); // mousedown fires before blur
+      dropdown.appendChild(item);
+    });
+  }
+  dropdown.classList.add('open');
+}
+
+function selectCategory(m) {
+  selectedMainCat = m.id;
+  document.getElementById('cat-search').value = m.name;
+  hideCatDropdown();
+}
+
+function hideCatDropdown() {
+  document.getElementById('cat-dropdown').classList.remove('open');
 }
 
 function setType(type) {
   currentType = type;
   selectedMainCat = null;
+  document.getElementById('cat-search').value = '';
   document.querySelectorAll('.type-btn').forEach(b => b.classList.toggle('active', b.dataset.type === type));
   document.getElementById('income-expense-fields').style.display = type === 'Contra' ? 'none' : 'block';
   document.getElementById('contra-fields').style.display = type === 'Contra' ? 'block' : 'none';
-  renderTypeFields();
 }
 
 // ---------- KEYPAD ----------
@@ -442,6 +532,12 @@ async function saveEntry() {
     refNumber: document.getElementById('ref-field').value.trim(),
     note: document.getElementById('note-field').value.trim()
   };
+
+  // Only send an explicit date if an admin-level user actually changed it —
+  // otherwise the server always uses its own "today", avoiding timezone drift.
+  if (dateTouched && DATE_EDIT_ROLES.includes(currentUser.role)) {
+    payload.date = document.getElementById('entry-date').value;
+  }
 
   if (currentType === 'Contra') {
     if (!selectedFrom || !selectedTo) { showMsg('Pick a from and to account.', true); return; }
@@ -478,12 +574,22 @@ function showMsg(text, isError) {
 
 // ---------- LEDGER ----------
 async function loadLedger() {
-  const today = new Date().toISOString().slice(0, 10);
-  document.getElementById('ledger-date').textContent = 'Today, ' + new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
-  const result = await api('listTransactions', { date: today });
-  if (!result.success) return;
+  // No date is sent — the server always resolves "today" itself so a
+  // browser/UTC timezone mismatch can never make entries disappear.
+  const result = await api('listTransactions', {});
   const list = document.getElementById('ledger-list');
+  if (!result.success) {
+    list.innerHTML = `<div class="error-state">Could not load the ledger: ${result.error}</div>`;
+    return;
+  }
+  document.getElementById('ledger-date').textContent =
+    'Today, ' + new Date(result.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+
   list.innerHTML = '';
+  if (result.transactions.length === 0) {
+    list.innerHTML = '<div class="empty-state">No entries yet today.</div>';
+    return;
+  }
   result.transactions.forEach(t => {
     const row = document.createElement('div');
     row.className = 'entry-row';
@@ -516,8 +622,14 @@ async function setPeriod(period, el) {
 }
 
 async function loadSummary() {
+  const msgEl = document.getElementById('dash-msg');
+  msgEl.textContent = '';
   const result = await api('getSummary', { userId: currentUser.id, period: currentPeriod });
-  if (!result.success) { showMsg(''); return; }
+  if (!result.success) {
+    msgEl.textContent = result.error || 'Could not load the dashboard.';
+    msgEl.style.color = 'var(--expense)';
+    return;
+  }
   document.getElementById('opening-input').value = result.openingBalance || '';
   document.getElementById('dash-balance').textContent = '₹' + result.balance.toLocaleString('en-IN');
   document.getElementById('ledger-balance').textContent = 'Balance ₹' + result.balance.toLocaleString('en-IN');
@@ -527,6 +639,10 @@ async function loadSummary() {
   const catWrap = document.getElementById('dash-categories');
   catWrap.innerHTML = '';
   const entries = Object.entries(result.byCategory);
+  if (entries.length === 0) {
+    catWrap.innerHTML = '<div class="empty-state">No income or expense yet for this period.</div>';
+    return;
+  }
   const max = Math.max(...entries.map(e => e[1]), 1);
   entries.sort((a, b) => b[1] - a[1]).forEach(([name, val]) => {
     const row = document.createElement('div');
@@ -542,8 +658,7 @@ async function saveOpeningBalance() {
   const amount = Number(document.getElementById('opening-input').value);
   if (!amount && amount !== 0) return;
   const result = await api('setOpeningBalance', {
-    userId: currentUser.id, userName: currentUser.name, amount,
-    date: currentPeriod === 'today' ? new Date().toISOString().slice(0, 10) : undefined
+    userId: currentUser.id, userName: currentUser.name, amount
   });
   if (result.success) loadSummary();
   else alert(result.error);
