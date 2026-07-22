@@ -352,15 +352,26 @@ let dateTouched = false; // true once an admin explicitly changes the date field
 
 // ---------- API ----------
 async function api(action, payload) {
+  let res;
   try {
-    const res = await fetch(API_URL, {
+    res = await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' }, // avoids CORS preflight on Apps Script
       body: JSON.stringify({ action, payload })
     });
+  } catch (err) {
+    return { success: false, error: 'Network error — could not reach the server. Check your connection.' };
+  }
+  try {
     return await res.json();
   } catch (err) {
-    return { success: false, error: 'Network error — could not reach the server.' };
+    // The request went through but didn't come back as JSON — almost always
+    // means Google returned a sign-in/access page instead of running the script.
+    return {
+      success: false,
+      error: 'Got an unexpected response from the server. This usually means the Apps Script ' +
+        'deployment\'s "Who has access" is not set to "Anyone" — check Deploy > Manage deployments.'
+    };
   }
 }
 
